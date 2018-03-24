@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+#+--------------------------------------+
+#|   fonctions BUILD-CORE onglets       |
+#+--------------------------------------+
+
+# Fonction appelant le contenue associeté à l'onglet A
+coreselect_menu_a ()
+{
+definition="Welcome BashKit. "
+clear
+fn_onglet_menu_A
+hour_tab
+echo ""
+fnsecA1
+fnsecA2
+fnsecA3
+choix
+ }
+
+# Fonction appelant le contenue associeté à l'onglet B
+coreselect_menu_b ()
+{
+definition="System Summary.  "
+clear
+fn_onglet_menu_B
+hour_tab
+graph
+choix
+}
+
+# Fonction appelant le contenue associeté à l'onglet C
+coreselect_menu_c ()
+{
+definition="Services Manager."
+clear
+fn_onglet_menu_C
+hour_tab
+service_manager
+choix
+}
+
+# Fonction appelant le contenue associeté à l'onglet D
+coreselect_menu_d ()
+{
+definition="Firewall Manager."
+clear
+fn_onglet_menu_D
+hour_tab
+echo "WORK IN PROGRESS - NEXT RELEASE"
+choix
+}
+
+# Fonction appelant le contenue associeté à l'onglet E
+coreselect_menu_e ()
+{
+definition="Network Manager. "
+clear
+fn_onglet_menu_E
+hour_tab
+inf_check
+inf_manager
+choix
+}

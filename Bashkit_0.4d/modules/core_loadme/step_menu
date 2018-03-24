@@ -1,0 +1,51 @@
+#########################################
+#////////////////////////////////////////
+
+#+--------------------------------------+
+#| fonctions de mise en forme des menu  |
+#+--------------------------------------+
+
+# 1 nettoie l'affichage
+# 2 rempli les variables pour l'affichage
+# 3 insere les fonction de contenu
+# 4 arrete la boucle entre fonction avec le choix
+
+menu_a ()
+{
+clear
+currentmenu=${FUNCNAME[0]}
+coreselect_$currentmenu
+choix
+}
+
+menu_b ()
+{
+clear
+currentmenu=${FUNCNAME[0]}
+coreselect_$currentmenu
+choix
+}
+
+menu_c ()
+{
+clear
+currentmenu=${FUNCNAME[0]}
+coreselect_$currentmenu
+choix
+}
+
+menu_d ()
+{
+clear
+currentmenu=${FUNCNAME[0]}
+coreselect_$currentmenu
+choix
+}
+
+menu_e ()
+{
+clear
+currentmenu=${FUNCNAME[0]}
+coreselect_$currentmenu
+choix
+}

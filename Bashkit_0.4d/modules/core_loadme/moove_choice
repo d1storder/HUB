@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+#+--------------------------------------+
+#|     fonctions des deplacements       |
+#+--------------------------------------+
+
+
+# Identification de la commande souhaiter.
+# fonction de choix/deplacement.
+
+choix ()
+{
+echo ""
+echo -e $BLANCLAIR"╔═══════════════════════════════════════════════════════════════════════╗"$NORMAL
+echo -e $BLANCLAIR"║"$NORMAL"       Choose Action$ROUGE a$NORMAL,$ROUGE b$NORMAL,$ROUGE c$NORMAL, .. $ROUGE 1$NORMAL, $ROUGE 2$NORMAL, $ROUGE 3$NORMAL, .. [$ROUGE q$NORMAL ]uit ? :      "$BLANCLAIR"     ║"$NORMAL
+echo -e $BLANCLAIR"╚═══════════════════════════════════════════════════════════════════════╝"$NORMAL
+read -p "" action
+
+case $action in
+  [qQ]) # quitter le menu
+        clear
+        echo -e "$ROUGE Exit Menu. $NORMAL"
+        exit 0
+  ;;
+
+  [a-z]) # Changement d'onglet.
+        if [[ $action = [a-e] ]]  # on determine le choix d'onglet pour deplacement [ type A-Z ].
+                then
+                        menu_$action
+                else
+                        clear
+                        $currentmenu
+        fi
+  ;;
+
+ [1-9]) # Choix liste.
+        case $currentmenu in
+                menu_a) # Si menu A.
+                coreselect_menu_a
+                ;;
+
+                menu_b) # Si menu B.
+                clear
+                $currentmenu
+                ;;
+
+                menu_c) # Etc..
+                service_viewer
+                ;;
+
+                menu_e)
+                network_viewer
+                ;;
+        esac
+  ;;
+
+  *) # Impossible de qualifier la volonté utilisateur.
+        $currentmenu
+        ;;
+esac
+}

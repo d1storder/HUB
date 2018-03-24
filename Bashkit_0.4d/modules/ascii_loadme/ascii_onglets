@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+#+--------------------------------------+
+#| fonctions ASCII-graphic Onglets      |
+#+--------------------------------------+
+
+
+# forme ASCII de l'onget A.
+fn_onglet_menu_A ()
+{
+bann
+echo " ________  _________  ____________  ____________  ___________"
+echo -e "/$CYAN'A-Menu'$NORMAL\/ B-Graph \/ C-Services \/ D-Firewall \/ E-Network \ "
+echo -e "$BLANCLAIR          \______________________________________________________________$NORMAL"
+#echo ""
+}
+
+# forme ASCII de l'onglet B.
+fn_onglet_menu_B ()
+{
+bann
+echo " ________  _________  ____________  ____________  ___________"
+echo -e "/ A-Menu \/$CYAN'B-Graph'$NORMAL\/ C-Services \/ D-Firewall \/ E-Network \ "
+echo "_________/           \___________________________________________________"
+#echo ""
+}
+
+# forme ASCII de l'onglet C.
+fn_onglet_menu_C ()
+{
+bann
+echo " ________  _________  ____________  ____________  ___________"
+echo -e "/ A-Menu \/ B-Graph \/$CYAN'C-Services'$NORMAL\/ D-Firewall \/ E-Network \  "
+echo "____________________/              \_____________________________________ "
+#echo ""
+}
+
+# forme ASCII de l'onglet D.
+fn_onglet_menu_D ()
+{
+bann
+echo " ________  _________  ____________  ____________  ___________"
+echo -e "/ A-Menu \/ B-Graph \/ C-Services \/"$CYAN"'D-Firewall'"$NORMAL"\/ E-Network \  "
+echo "__________________________________/              \_______________________ "
+#echo ""
+}
+
+# forme ASCII de l'onglet E.
+fn_onglet_menu_E ()
+{
+bann
+echo " ________  _________  ____________  ____________  ___________"
+echo -e "/ A-Menu \/ B-Graph \/ C-Services \/ D-Firewall \/"$CYAN"'E-Network'"$NORMAL"\  "
+echo "________________________________________________/             \__________ "
+#echo ""
+}
+

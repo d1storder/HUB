@@ -1,0 +1,76 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+#########################################
+#           Fonction menu B             #
+#########################################
+
+graph ()
+{
+getinfo
+echo ""
+echo -e "$JAUNE   System :$NORMAL"
+echo ""
+echo -e "$BLANCLAIR  Host : $ROUGE[ $NORMAL"$nommachine$ROUGE" ]"$NORMAL
+echo -e "$BLANCLAIR  Type : $ROUGE[ $NORMAL$redhatversion"$ROUGE"]"$NORMAL
+echo -e "$BLANCLAIR  Boot : $ROUGE[ $NORMAL$timeup"$ROUGE" ]"$NORMAL
+echo -e $BLANCLAIR" ════════════════════════════════════════════════════════════════════════"$NORMAL
+echo -e "$JAUNE   Processor : $NORMAL"
+echo ""
+echo " $procspeed" "x" $procqt "core"
+echo -e $BLANCLAIR" ════════════════════════════════════════════════════════════════════════"$NORMAL
+echo -e "$JAUNE   Memory : $NORMAL"
+echo ""
+echo -e " ----" $JAUNE"RAM"$NORMAL" ----  ----" $JAUNE"SWAP"$NORMAL" ----"
+echo -e "$BLANCLAIR Total  :$NORMAL "$memtotal" $BLANCLAIR Total :$NORMAL "$swaptotal
+echo    " -----------------------------"
+echo -e "$BLANCLAIR Used   :$NORMAL "$memused" $BLANCLAIR Used  :$NORMAL "$swapused
+echo -e "$BLANCLAIR Free   :$NORMAL "$memfree" $BLANCLAIR Free  :$NORMAL "$swapfree
+echo -e "$BLANCLAIR Buffer :$NORMAL "$membuffer
+echo -e $BLANCLAIR" ════════════════════════════════════════════════════════════════════════"$NORMAL
+echo -e "$JAUNE   Disk Storage :$NORMAL"
+echo ""
+echo -e $BLANCLAIR"  Disk                       Total   Used  Free  %   Mount"$NORMAL
+echo "$diskusage"
+memfree=""
+}
+
+getinfo ()
+{
+#model & vitesse processeur
+procspeed=$(cat /proc/cpuinfo | grep "model name" | head -n1 | cut -d':' -f2)
+
+#nombre de coeurs
+procqt=$(cat /proc/cpuinfo | grep processor | wc -l)
+
+#utildisk
+diskusage=$(df -h | grep '^/')
+
+#uptime machine
+timeup=$(uptime | cut -d',' -f1 | awk '{print $2,$3,$4}')
+
+#nom machine
+nommachine=$(hostname)
+
+#definition ram total
+memtotal=$(free -h | head -n2 | tail -n1 | awk '{print $2}')
+#definition swap total
+swaptotal=$(free -h | head -n3 | tail -n1 | awk '{print $2}')
+
+#definition swap total
+membuffer=$(free -h | head -n2 | tail -n1 | awk '{print $6}')
+
+#definition ram libre
+memfree=$(free -h | head -n2 | tail -n1 | awk '{print $4}')
+#definition swap libre
+swapfree=$(free -h | head -n3 | tail -n1 | awk '{print $4}')
+
+#definition ram utilisé
+memused=$(free -h | head -n2 | tail -n1 | awk '{print $3}')
+swapused=$(free -h | head -n3 | tail -n1 | awk '{print $3}')
+
+#version system
+redhatversion=$(cat /etc/os-release | grep "PRETTY_NAME" | cut -d'=' -f2 | cut -d'"' -f2)
+}

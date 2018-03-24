@@ -1,0 +1,199 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+#+--------------------------------------+
+#| fonctions menu E Network             |
+#+--------------------------------------+
+
+inf_check ()
+{
+#liste toutes les cartes rsx
+ifconfig -a | grep : | awk '{print $1}' | grep : | cut -d':' -f1 > tmp_runtime/network_inf.txt
+echo "STOP" >> tmp_runtime/network_inf.txt
+ifconfig | grep : | awk '{print $1}' | grep : | cut -d':' -f1 > tmp_runtime/network_inf_enabled.txt
+echo "STOP" >> tmp_runtime/network_inf_enabled.txt
+}
+
+inf_manager ()
+{
+echo ""
+#Variable incrémenale
+num_rool=1
+#Lecture du fichier des services
+network_build=$(head -n1 tmp_runtime/network_inf.txt  | tail -n1)
+# Boucle de conception d'affichage
+while test $network_build != "STOP"
+        do
+        # Lire la ligne
+        network_build=$(head -n$num_rool tmp_runtime/network_inf.txt  | tail -n1)
+        # on verifie si la carte est active
+        network_enabled=$(cat tmp_runtime/network_inf_enabled.txt | grep $network_build)
+        # la carte est elle active
+        if [[ $network_enabled = "" ]]
+           then
+           link_state=$ROUGE\LINK-DOWN$NORMAL
+           else
+           link_state=$VERT\LINK-UP$NORMAL
+        fi
+        # Verifie l'existance de la config rsx
+        network_exist=$(cat /etc/sysconfig/network-scripts/ifcfg-$network_build 2> /dev/null | grep IPADDR | head -n1 | cut -d'=' -f2)
+        # Si la config n'existe pas :
+        if [[ $network_exist = "" ]]
+            then
+                network_exist=$(cat /etc/sysconfig/network-scripts/ifcfg-$network_build 2> /dev/null | grep -i dhcp | head -n1 | cut -d'=' -f2)
+                if [[ $network_exist = "" ]]
+                    then
+                    network_exist=$ROUGE\NO-CONFIG$NORMAL
+                    else
+                    network_exist=$ORANGE\DHCP$NORMAL
+                fi
+                # On verifie que ce n'est pas le signal STOP
+                if [[ $network_build = "STOP" ]]
+                    then
+                    # Si la boucle arrive a STOP alors FIN
+                    choix
+                    else
+                    # carte rsx non configure
+                    echo -e " [$JAUNE"$num_rool"$NORMAL] - $BLANCLAIR $network_build : $network_exist -- $link_state "
+                    echo -e "$BLANCLAIR ════════════════════════════════════════════════════════════════════════$NORMAL"
+                fi
+            else
+                # Existant On
+                echo -e " [$JAUNE"$num_rool"$NORMAL] - $BLANCLAIR $network_build :$VERT $network_exist $NORMAL -- $link_state "
+                echo -e "$BLANCLAIR ════════════════════════════════════════════════════════════════════════$NORMAL"
+        fi
+        # Increment de variable
+        num_rool=$(($num_rool+1))
+        done
+}
+
+# Sous manager du service
+network_viewer ()
+{
+# verifie nombre
+if [[ $action = [0-9] ]]
+    then
+        # forme l'affichage
+        clear
+        fn_onglet_menu_E
+        hour_tab
+        # recupere le nom par le numero :
+        network_select=$(head -n$action tmp_runtime/network_inf.txt  | tail -n1)
+        # status du rsx :
+        network_enabled=$(cat tmp_runtime/network_inf_enabled.txt | grep $network_select)
+        # la carte est elle active
+        if [[ $network_enabled = "" ]]
+           then
+           link_state=$ROUGE\LINK-DOWN$NORMAL
+           else
+           link_state=$VERT\LINK-UP$NORMAL
+        fi
+
+        # ont recupere @IP
+        network_exist=$(cat /etc/sysconfig/network-scripts/ifcfg-$network_select 2> /dev/null | grep IPADDR | head -n1 | cut -d'=' -f2)
+         if [[ $network_exist = "" ]]
+            then
+                network_exist=$(cat /etc/sysconfig/network-scripts/ifcfg-$network_select 2> /dev/null | grep -i DHCP | head -n1 | cut -d'=' -f2)
+                 if [[ $network_exist = "" ]]
+                    then
+                    network_exist=$ROUGE\NO-CONFIG$NORMAL
+                    else
+                    network_exist=$ORANGE\DHCP$NORMAL
+                 fi
+         fi
+
+        echo -e "$CYAN  Manager Mode $NORMAL:"
+        echo ""
+        #graphique service off
+        echo -e " Adaptater :  $BLANCLAIR $network_select #$NORMAL"
+        echo -e " Status    : '$VERT $network_exist$NORMAL - $link_state '"
+        echo -e "$BLANCLAIR╔════════════════╔════════════════╔════════════════╔════════════════════╗$NORMAL"
+        echo -e "$BLANCLAIR║$NORMAL    ("$JAUNE"E"$NORMAL")nable    $BLANCLAIR║$NORMAL    ("$JAUNE"D"$NORMAL")isable   $BLANCLAIR║$NORMAL    ("$JAUNE"Ed"$NORMAL")it $ROUGE     $NORMAL$BLANCLAIR║$NORMAL    ("$JAUNE"A"$NORMAL")ctualize     $BLANCLAIR║$NORMAL"
+
+
+# recolte du choix
+echo "╔═══════════════════════════════════════════════════════════════════════╗"
+echo -e "║        Choose Action$ROUGE E$NORMAL,$ROUGE D$NORMAL,$ROUGE Ed$NORMAL,$ROUGE a$NORMAL, .. [$ROUGE q$NORMAL ]uit$CYAN manager mode$NORMAL ? :        ║"
+echo "╚═══════════════════════════════════════════════════════════════════════╝"
+read -p "" action_network
+fn_mngt_network
+fi
+}
+
+net_config_builder ()
+{
+clear
+fn_onglet_menu_E
+hour_tab
+echo -e "$BLANCLAIR  NETWORK IPv4 GENERATOR  ║$NORMAL"
+echo -e "$BLANCLAIR══════════════════════════╝$NORMAL"
+echo -e "  Network Adaptater ="$CYAN $network_select "$NORMAL-- "$network_exist $NORMAL
+echo -e $BLANCLAIR"╔═══════════════════════════════════════════════════════════════════════╗"$NORMAL
+echo -e $BLANCLAIR"* Enter IP_ADDR  -  [ 192.168.0.1 ]                                     *"$NORMAL
+echo -e $BLANCLAIR"╚═══════════════════════════════════════════════════════════════════════╝"$NORMAL
+read ip_address
+echo -e $BLANCLAIR"╔═══════════════════════════════════════════════════════════════════════╗"$NORMAL
+echo -e $BLANCLAIR"* Enter NETMASK  -  [ 255.255.255.0 ]                                   *"$NORMAL
+echo -e $BLANCLAIR"╚═══════════════════════════════════════════════════════════════════════╝"$NORMAL
+read ip_netmask
+echo -e $BLANCLAIR"╔═══════════════════════════════════════════════════════════════════════╗"$NORMAL
+echo -e $BLANCLAIR"* Enter GATEWAY  -  [ 192.168.0.254 ]                                   *"$NORMAL
+echo -e $BLANCLAIR"╚═══════════════════════════════════════════════════════════════════════╝"$NORMAL
+read ip_gateway
+echo -e $BLANCLAIR"═════════════════════════════════════════════════════════════════════════"$NORMAL
+echo -e $BLANCLAIR"======================"$ROUGE" WARNING WRITE CONFIG ?!"$NORMAL "[Y/N] ===================="$NORMAL
+read yes_or_no
+echo "to write"
+
+
+case $yes_or_no in
+  [yY])
+        echo "DEVICE="$network_select > /etc/sysconfig/network-scripts/ifcfg-$network_select
+        echo "BOOTPROTO=none" >> /etc/sysconfig/network-scripts/ifcfg-$network_select
+        echo "IPADDR="$ip_address >> /etc/sysconfig/network-scripts/ifcfg-$network_select
+        echo "NETMASK="$ip_netmask >> /etc/sysconfig/network-scripts/ifcfg-$network_select
+        echo "GATEWAY="$ip_gateway >> /etc/sysconfig/network-scripts/ifcfg-$network_select
+        echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-$network_select
+        network_viewer
+  ;;
+
+  [nN])
+        network_viewer
+  ;;
+
+  *)
+        network_viewer
+  ;;
+
+esac
+}
+
+# traitement du choix
+fn_mngt_network ()
+{
+case $action_network in
+  [qQ])
+  clear
+  echo -e "$ROUGE Exit Menu. $NORMAL"
+  menu_e
+  ;;
+  E)
+  sudo ifconfig $network_select up
+  ;;
+  D)
+  sudo ifconfig $network_select down
+  ;;
+  "Ed")
+  net_config_builder
+  ;;
+  aA)
+  inf_check
+  network_viewer
+  ;;
+esac
+# retour au viewer
+inf_check
+network_viewer
+}

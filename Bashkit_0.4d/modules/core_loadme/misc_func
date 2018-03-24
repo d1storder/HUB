@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Fonction date, heure haut droite
+hour_tab ()
+{
+date_now=$(date "+%d/%m/%Y - %H:%M")
+echo ""
+echo -e "  $CYAN$definition$NORMAL                               $BLANCLAIR$user_bashkit $date_now$NORMAL"
+echo -e "$BLANCLAIR═════════════════════════════════════════════════════════════════════════$NORMAL"
+}
+

@@ -1,0 +1,118 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+# Onglet Menu C
+
+#+--------------------------------------+
+#| fonctions de management des services |
+#+--------------------------------------+
+
+service_manager ()
+{
+echo ""
+#Variable incrémenale
+num_rool=1
+#Lecture du fichier des services
+service_build=$(head -n1 ./services.conf  | tail -n1)
+# Boucle de conception d'affichage
+while test $service_build != "STOP"
+        do
+        # Lire la premiere ligne
+        service_build=$(head -n$num_rool ./services.conf  | tail -n1)
+        # Verifie l'existance du service
+        service_exist=$(systemctl | awk '{print $1}' | cut -d'.' -f1 | grep $service_build$)
+        if [[ $service_exist = "" ]]
+            then
+                # Si il n'existe pas
+                if [[ $service_build = "STOP" ]]
+                    then
+                    # Si la boucle  arrive a STOP
+                    choix
+                    else
+                    # Innexistant ou Off
+                    state_run=$(systemctl status $service_build.service | grep "Active" | cut -d':' -f2)
+                    color_state=$(echo -e $ROUGE $state_run $NORMAL)
+                fi
+
+            else
+                # Existant On
+                state_run=$(systemctl status $service_build.service | grep "Active" | cut -d':' -f2)
+                color_state=$(echo -e $VERT $state_run $NORMAL)
+        fi
+        # Affiche la ligne du services avec status et colo
+        echo -e " [$JAUNE"$num_rool"$NORMAL] - $BLANCLAIR $service_build$NORMAL : $color_state"
+        echo -e "$BLANCLAIR ════════════════════════════════════════════════════════════════════════$NORMAL"
+
+        #incremente la boucle services
+        num_rool=$(($num_rool+1))
+        done
+}
+
+# Sous manager du service
+service_viewer ()
+{
+# verifie nombre
+if [[ $action = [0-9] ]]
+    then
+        # forme l'affichage
+        clear
+        fn_onglet_menu_C
+        hour_tab
+        # recupere le nom par le numero :
+        srv_select=$(head -n$action ./services.conf  | tail -n1)
+        # status du service :
+        systemctl status $srv_select.service | grep "Active" | cut -d':' -f2 > run
+        run_state=$(cat ./run)
+        # Si contient etat running alors vert
+        red_or_green=$(echo $run_state | grep "dead")
+        echo -e "$CYAN  Manager Mode $NORMAL:"
+        echo ""
+                if [[ $red_or_green = "" ]]
+                    then
+                    color_state=$(echo -e $VERT $run_state $NORMAL)
+                    else
+                    color_state=$(echo -e $ROUGE $run_state $NORMAL)
+                fi
+                    #graphique service
+                    echo -e " Service :  $BLANCLAIR $srv_select #$NORMAL"
+                    echo -e " Status  :  $color_state"
+                    echo -e "$BLANCLAIR╔════════════════╔════════════════╔════════════════╔════════════════════╗$NORMAL"
+                    echo -e "$BLANCLAIR║$NORMAL    ("$JAUNE"S"$NORMAL")tart     $BLANCLAIR║$NORMAL    ("$JAUNE"R"$NORMAL")estart   $BLANCLAIR║$NORMAL    ("$JAUNE"Ss"$NORMAL")top     $BLANCLAIR║$NORMAL    ("$JAUNE"A"$NORMAL")ctualiser    $BLANCLAIR║$NORMAL"
+
+fi
+# recolte du choix
+#echo ""
+echo "╔═══════════════════════════════════════════════════════════════════════╗"
+echo -e "║        Choose Action$ROUGE S$NORMAL,$ROUGE R$NORMAL,$ROUGE Ss$NORMAL,$ROUGE a$NORMAL, .. [$ROUGE q$NORMAL ]uit$CYAN manager mode$NORMAL ? :        ║"
+echo "╚═══════════════════════════════════════════════════════════════════════╝"
+read -p "" action_services
+fn_mngt
+}
+
+# traitement du choix
+fn_mngt ()
+{
+case $action_services in
+  [qQ])
+  clear
+  echo -e "$ROUGE Exit Menu. $NORMAL"
+  menu_c
+  ;;
+  S)
+  sudo service $srv_select start
+  ;;
+  R)
+  sudo service $srv_select restart
+  ;;
+  "Ss")
+  sudo service $srv_select stop
+  ;;
+  aA)
+  service_viewer
+  ;;
+esac
+# retour au viewer
+service_viewer
+}

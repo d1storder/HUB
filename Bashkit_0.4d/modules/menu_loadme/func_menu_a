@@ -1,0 +1,81 @@
+#!/bin/bash
+
+#########################################
+#////////////////////////////////////////
+
+#+--------------------------------------+
+#|   fonctions BUILDER VERTICAL onglet  |
+#+--------------------------------------+
+
+
+#########################################
+#            Fonction menu A            #
+#########################################
+
+
+# contenue du choix 1 dans menu A
+fnsecA1 ()
+{
+if [[ $currentmenu = "menu_a" ]]
+then
+if [[ $action = [1] ]]
+        then
+        echo -e "$BLANCLAIR [$JAUNE"1"$BLANCLAIR] - access Shell.$NORMAL"
+        wait
+        clear
+        echo -e "$ROUGE Exit Menu. $NORMAL"
+        exit 0
+        else
+        echo -e " [$JAUNE"1"$BWhite] - access Shell."
+fi
+
+fi
+echo " ════════════════════════════════════════════════════════════════════════"
+}
+#########################################
+#////////////////////////////////////////
+
+# contenue du choix 2 dans menu A
+fnsecA2 ()
+{
+if [[ $action = [2] ]]
+        then
+        echo -e "$BLANCLAIR [$JAUNE"2"$BLANCLAIR] - task manager.$NORMAL"
+        wait
+  gest_top=$(whereis htop | grep /)
+                if [[ $gest_top = "" ]]
+                   then
+                   top
+                   else
+                   htop
+                fi
+        else
+        echo -e " [$JAUNE"2"$BWhite] - task manager."
+fi
+echo " ════════════════════════════════════════════════════════════════════════"
+}
+
+#########################################
+#////////////////////////////////////////
+
+# contenue du choix 3 dans menu A
+fnsecA3 ()
+{
+if [[ $pid_to_kill != "" ]]
+   then
+   sudo kill -15 $pid_to_kill 2> /dev/null
+   pid_to_kill=
+fi
+if [[ $action = [3] ]]
+        then
+        echo -e "$BLANCLAIR [$JAUNE"3"$BLANCLAIR] - logs System [ REAL TIME - PRESS "ENTER" TO QUIT ]:$NORMAL"
+        echo "════════════════════════════════════════════════════════════════════"
+        wait
+        sudo tail -15f /var/log/messages &
+        pid_to_kill=$(ps -lfe | grep -b "tail -15f" | head -n1 | awk '{print $4}')
+        else
+        echo -e " [$JAUNE"3"$BWhite] - logs System."
+fi
+echo " ════════════════════════════════════════════════════════════════════════"
+}
+
